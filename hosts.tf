@@ -52,8 +52,19 @@ resource "triton_machine" "dev-postgres" {
             "useradd --system hab",
             "curl -sL https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash -s -- -v 0.25.1",
             "systemctl daemon-reload && systemctl start supervisor",
-            "hab pkg install core/postgresql",
-            "hab svc start core/postgresql --group dev --topology leader --peer ${triton_machine.dev-postgres-permanent-peer.primaryip}"
+            "HAB_NONINTERACTIVE=true hab pkg install smartb/postgresql94 --channel unstable",
+            "mkdir --parents /hab/svc/postgresql94 && chown --recursive hab /hab/svc/postgresql94"
+        ]
+    }
+
+    provisioner "file" {
+      source      = "user.toml"
+      destination = "/hab/svc/postgresql94/user.toml"
+    }
+
+    provisioner "remote-exec" {
+        inline = [
+            "hab svc start smartb/postgresql94 --group dev --topology standalone --peer ${triton_machine.dev-permanent-peer.primaryip}"
         ]
     }
 }
