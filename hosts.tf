@@ -28,14 +28,17 @@ resource "triton_machine" "dev-permanent-peer" {
 
 resource "triton_machine" "dev-postgres" {
     count = 2
-    depends_on = ["triton_machine.dev-postgres-permanent-peer"]
+    depends_on = ["triton_machine.dev-permanent-peer"]
     image   = "7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b"
     name    = "dev-postgres-${count.index}"
-    package = "g4-highcpu-1G"
+    package = "g4-highcpu-4G"
     connection {
         user = "root"
         host = "${self.primaryip}"
         private_key = "${file("~/.ssh/id_rsa")}"
+    }
+    nic = {
+      network = "ccccb251-1b24-457a-8b46-459e2199882e"
     }
 
     provisioner "file" {
