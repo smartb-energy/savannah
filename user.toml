@@ -1,2 +1,0 @@
-initdb_pwfile = '/hab/svc/postgresql94/config/pwfile'
-include_dir = '/hab/svc/postgresql94/config/conf.d'
