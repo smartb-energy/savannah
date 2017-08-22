@@ -27,7 +27,7 @@ resource "triton_machine" "dev-permanent-peer" {
 }
 
 resource "triton_machine" "dev-postgres" {
-    count = 2
+    count = 3
     depends_on = ["triton_machine.dev-permanent-peer"]
     image   = "7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b"
     name    = "dev-postgres-${count.index}"
