@@ -64,7 +64,8 @@ resource "triton_machine" "dev-postgres" {
 
     provisioner "remote-exec" {
         inline = [
-            "hab svc start smartb/postgresql94 --group dev --topology standalone --peer ${triton_machine.dev-permanent-peer.primaryip}"
+            "hab start smartb/postgresql94 --group dev --topology leader --peer ${triton_machine.dev-permanent-peer.primaryip}"
+            "timeout 60 bash -c 'until hab svc status core/postgresql | grep state:up; do echo waiting for core/postgresql to come up...; sleep 1; done'"
         ]
     }
 }
