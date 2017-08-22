@@ -20,7 +20,7 @@ resource "triton_machine" "dev-permanent-peer" {
         inline = [
             "hostname ${self.name}",
             "useradd --system hab",
-            "curl -sL https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash -s -- -v 0.25.1",
+            "curl -sL https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash",
             "systemctl daemon-reload && systemctl start supervisor"
         ]
     }
@@ -31,7 +31,7 @@ resource "triton_machine" "dev-postgres" {
     depends_on = ["triton_machine.dev-permanent-peer"]
     image   = "7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b"
     name    = "dev-postgres-${count.index}"
-    package = "g4-highcpu-4G"
+    package = "g4-highcpu-512M"
     connection {
         user = "root"
         host = "${self.primaryip}"
@@ -50,9 +50,9 @@ resource "triton_machine" "dev-postgres" {
         inline = [
             "hostname ${self.name}",
             "useradd --system hab",
-            "curl -sL https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash -s -- -v 0.25.1",
+            "curl -sL https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash",
             "systemctl daemon-reload && systemctl start supervisor",
-            "HAB_NONINTERACTIVE=true hab pkg install smartb/postgresql94 --channel unstable",
+            "HAB_NONINTERACTIVE=true hab pkg install core/postgresql --channel unstable",
             "mkdir --parents /hab/svc/postgresql94 && chown --recursive hab /hab/svc/postgresql94"
         ]
     }
