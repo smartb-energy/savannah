@@ -10,7 +10,7 @@ resource "triton_machine" "dev-postgres" {
   }
 
   provisioner "file" {
-    destination = "$HOME/supervisor.service"
+    destination = "supervisor.service"
     content = <<EOF
 [Unit]
 Description=The Habitat Supervisor
@@ -28,7 +28,7 @@ EOF
       "useradd --system hab",
       "curl -sL https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | bash",
       "hab pkg install core/hab-sup",
-      "mv $HOME/supervisor.service /etc/systemd/system/supervisor.service",
+      "mv supervisor.service /etc/systemd/system/supervisor.service",
       "systemctl daemon-reload",
       "systemctl start supervisor",
       "systemctl enable supervisor",
