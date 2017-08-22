@@ -52,7 +52,7 @@ resource "triton_machine" "dev-postgres" {
             "useradd --system hab",
             "curl -sL https://raw.githubusercontent.com/habitat-sh/habitat/master/components/hab/install.sh | sudo bash",
             "systemctl daemon-reload && systemctl start supervisor",
-            "HAB_NONINTERACTIVE=true hab pkg install core/postgresql --channel unstable",
+            "HAB_NONINTERACTIVE=true hab pkg install core/postgresql",
             "mkdir --parents /hab/svc/postgresql94 && chown --recursive hab /hab/svc/postgresql94"
         ]
     }
@@ -64,7 +64,7 @@ resource "triton_machine" "dev-postgres" {
 
     provisioner "remote-exec" {
         inline = [
-            "hab start smartb/postgresql94 --group dev --topology leader --peer ${triton_machine.dev-permanent-peer.primaryip}",
+            "hab start core/postgresql --group dev --topology leader --peer ${triton_machine.dev-permanent-peer.primaryip}",
             "timeout 60 bash -c 'until hab svc status core/postgresql | grep state:up; do echo waiting for core/postgresql to come up...; sleep 1; done'"
         ]
     }
