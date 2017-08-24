@@ -1,4 +1,4 @@
-resource "triton_machine" "dev-postgres" {
+resource "triton_machine" "development-postgres" {
   count = 3
   image   = "7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b"
   name    = "dev-postgres-${count.index}"
@@ -9,6 +9,28 @@ resource "triton_machine" "dev-postgres" {
     private_key = "${file("~/.ssh/id_rsa")}"
   }
 
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "mkdir --parents /etc/chef"
+  #   ]
+  # }
+  #
+  # provisioner "file" {
+  #   source = "${var.chef_user_key}"
+  #   destination = "/etc/chef/smartb-pair.pem"
+  # }
+
+  provisioner "chef" {
+    environment = "development"
+    run_list = ["servers::default"]
+    node_name = "${self.name}"
+    server_url = "https://api.chef.io/organizations/smartb"
+    user_name = "${var.chef_username}"
+    user_key = "${file("${var.chef_user_key}")}"
+    recreate_client=true
+    version = "12.17.44"
+  }
+
   provisioner "file" {
     destination = "supervisor.service"
     content = <<EOF
@@ -16,7 +38,7 @@ resource "triton_machine" "dev-postgres" {
 Description=The Habitat Supervisor
 
 [Service]
-ExecStart=/bin/hab sup run --peer ${triton_machine.dev-postgres.0.primaryip}
+ExecStart=/bin/hab sup run --peer ${triton_machine.development-postgres.0.primaryip}
 
 [Install]
 WantedBy=default.target
@@ -32,7 +54,7 @@ EOF
       "systemctl daemon-reload",
       "systemctl start supervisor",
       "systemctl enable supervisor",
-      "hab svc load core/postgresql --group dev --topology leader"
+      "hab svc load starkandwayne/postgresql --group development --topology leader --channel unstable"
     ]
   }
 }

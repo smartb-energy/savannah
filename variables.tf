@@ -5,3 +5,5 @@
 variable "triton_key_id" {}
 variable "triton_account" {}
 variable "triton_url" {}
+variable "chef_user_key" {}
+variable "chef_username" {}
