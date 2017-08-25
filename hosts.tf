@@ -9,17 +9,6 @@ resource "triton_machine" "development-postgres" {
     private_key = "${file("~/.ssh/id_rsa")}"
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  #     "mkdir --parents /etc/chef"
-  #   ]
-  # }
-  #
-  # provisioner "file" {
-  #   source = "${var.chef_user_key}"
-  #   destination = "/etc/chef/smartb-pair.pem"
-  # }
-
   provisioner "chef" {
     environment = "development"
     run_list = ["servers::default"]
